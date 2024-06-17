@@ -18,6 +18,7 @@ import java.util.Set;
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id", nullable = false)
     private Long userId;
     @Column(unique = true, nullable = false, length = 100)
     private String userName;

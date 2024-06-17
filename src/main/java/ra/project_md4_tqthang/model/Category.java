@@ -13,6 +13,7 @@ import lombok.*;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "category_id", nullable = false)
     private Long categoryId;
 
     @Column(nullable = false, length = 100)

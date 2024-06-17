@@ -1,6 +1,7 @@
 package ra.project_md4_tqthang.security.principal;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,9 +13,9 @@ import ra.project_md4_tqthang.repository.IUserRepository;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class UserDetailCustomService implements UserDetailsService {
-    private final IUserRepository userRepository;
+    @Autowired
+    private IUserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

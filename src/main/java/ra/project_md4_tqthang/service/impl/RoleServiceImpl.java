@@ -2,6 +2,7 @@ package ra.project_md4_tqthang.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.aspectj.weaver.ICrossReferenceHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ra.project_md4_tqthang.constants.RoleName;
 import ra.project_md4_tqthang.model.Role;
@@ -12,9 +13,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
-@RequiredArgsConstructor
 public class RoleServiceImpl implements IRoleService {
-    private final IRoleRepository roleRepository;
+    @Autowired
+    private IRoleRepository roleRepository;
+
     @Override
     public Role findByRoleName(RoleName roleName) {
         return roleRepository.findRoleByRoleName(roleName).orElseThrow(()->new NoSuchElementException("Role not found"));

@@ -13,6 +13,7 @@ import ra.project_md4_tqthang.constants.RoleName;
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "role_id", nullable = false)
     private Long roleId;
     @Enumerated(EnumType.STRING)
     private RoleName roleName;

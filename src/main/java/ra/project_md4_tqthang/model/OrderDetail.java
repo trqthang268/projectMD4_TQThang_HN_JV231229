@@ -1,6 +1,7 @@
 package ra.project_md4_tqthang.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 
 @Entity
@@ -22,12 +23,13 @@ public class OrderDetail {
     @JoinColumn(name = "product_id",nullable = false)
     private Products products;
 
-    @Column(nullable = false, length = 100)
+    @Column(length = 100)
     private String name;
 
     @Column(nullable = false)
     private Double unitPrice;
 
     @Column(nullable = false)
+    @Min(0)
     private Integer orderQuantity;
 }

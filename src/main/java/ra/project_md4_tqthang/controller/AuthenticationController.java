@@ -1,6 +1,7 @@
 package ra.project_md4_tqthang.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,10 +16,12 @@ import ra.project_md4_tqthang.service.IAuthService;
 
 @RestController
 @RequestMapping("/api.myservice.com/v1/auth")
-@RequiredArgsConstructor
-public class AuthenticationController {
-    private final IAuthService authService;
 
+public class AuthenticationController {
+    @Autowired
+    private IAuthService authService;
+
+    //PermitAll - POST - Đăng kí tài khoản người dùng   #4870
     @PostMapping("/sign-up")
     public ResponseEntity<?> handleRegister(@RequestBody FormRegister formRegister){
         authService.handleRegister(formRegister);
@@ -30,6 +33,7 @@ public class AuthenticationController {
                 ,HttpStatus.CREATED);
     }
 
+    //PermitAll - POST - Đăng nhập tài khoản bằng username và password #4871
     @PostMapping("/sign-in")
     public ResponseEntity<?> handleRegister(@RequestBody FormLogin formLogin){
         return new ResponseEntity<>(

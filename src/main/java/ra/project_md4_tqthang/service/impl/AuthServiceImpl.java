@@ -1,6 +1,7 @@
 package ra.project_md4_tqthang.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,13 +27,18 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
+
 public class AuthServiceImpl implements IAuthService {
-    private final IRoleService roleService;
-    private final IUserRepository userRepository;
-    private final AuthenticationManager authenticationManager;
-    private final JwtProvider jwtProvider;
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private IRoleService roleService;
+    @Autowired
+    private IUserRepository userRepository;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtProvider jwtProvider;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public void handleRegister(FormRegister formRegister) {
