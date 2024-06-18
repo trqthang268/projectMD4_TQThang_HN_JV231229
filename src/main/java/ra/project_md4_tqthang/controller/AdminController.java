@@ -6,17 +6,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ra.project_md4_tqthang.constants.EHttpStatus;
+import ra.project_md4_tqthang.constants.OrderStatus;
+import ra.project_md4_tqthang.dto.request.OrderStatusRequest;
 import ra.project_md4_tqthang.dto.request.PagingRequest;
 import ra.project_md4_tqthang.dto.response.ResponseWrapper;
 import ra.project_md4_tqthang.exception.CustomException;
-import ra.project_md4_tqthang.model.Category;
-import ra.project_md4_tqthang.model.Products;
-import ra.project_md4_tqthang.model.Role;
-import ra.project_md4_tqthang.model.Users;
-import ra.project_md4_tqthang.service.impl.CategoryServiceImpl;
-import ra.project_md4_tqthang.service.impl.ProductServiceImpl;
-import ra.project_md4_tqthang.service.impl.RoleServiceImpl;
-import ra.project_md4_tqthang.service.impl.UserServiceImpl;
+import ra.project_md4_tqthang.model.*;
+import ra.project_md4_tqthang.service.impl.*;
 
 import java.util.List;
 
@@ -31,6 +27,8 @@ public class AdminController {
     private CategoryServiceImpl categoryService;
     @Autowired
     private ProductServiceImpl productService;
+    @Autowired
+    private OrderServiceImpl orderService;
 
     //ROLE_ADMIN - GET - Tìm kiếm người dùng theo tên    #4905
     @GetMapping("/users/search")
@@ -143,5 +141,31 @@ public class AdminController {
                 pagingRequest.getSortBy()
         ).getContent();
         return new ResponseEntity<>(products, HttpStatus.OK);
+    }
+
+    //ROLE_ADMIN - GET - Danh sách tất cả đơn hàng #4916
+    @GetMapping("/orders")
+    public ResponseEntity<List<Order>> getAllOrders(){
+        return new ResponseEntity<>(orderService.getAllOrders(),HttpStatus.OK);
+    }
+
+    //ROLE_ADMIN - GET - Danh sách đơn hàng theo trạng thái #4917
+    @GetMapping("/orders/{orderStatus}")
+    public ResponseEntity<List<Order>> getAllOrdersByStatus(@PathVariable OrderStatus orderStatus){
+        return new ResponseEntity<>(orderService.getOrderByStatus(orderStatus),HttpStatus.OK);
+    }
+
+    //ROLE_ADMIN - GET - Chi tiết đơn hàng - #4918
+    @GetMapping("orders/{orderId}")
+    public ResponseEntity<List<OrderDetail>> getOrderDetailsByOrderId(@PathVariable Long orderId){
+        return new ResponseEntity<>(orderService.getOrderDetailsByOrderId(orderId),HttpStatus.OK);
+    }
+
+    //ROLE_ADMIN - PUT - Cập nhật trạng thái đơn hàng #4919
+    @PutMapping("/orders/{orderId}/status")
+    public ResponseEntity<ResponseWrapper<Order>> updateOrderStatus(@PathVariable Long orderId, @RequestBody OrderStatusRequest orderStatusRequest){
+        orderService.updateOrderStatus(orderId, orderStatusRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
+
     }
 }

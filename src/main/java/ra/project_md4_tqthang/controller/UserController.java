@@ -10,19 +10,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import ra.project_md4_tqthang.dto.request.AddToCartRequest;
-import ra.project_md4_tqthang.dto.request.ChangePasswordRequest;
-import ra.project_md4_tqthang.dto.request.CheckoutRequest;
-import ra.project_md4_tqthang.dto.request.UpdateUserRequest;
+import ra.project_md4_tqthang.constants.OrderStatus;
+import ra.project_md4_tqthang.dto.request.*;
 import ra.project_md4_tqthang.exception.CustomException;
-import ra.project_md4_tqthang.model.ShoppingCart;
-import ra.project_md4_tqthang.model.Users;
+import ra.project_md4_tqthang.model.*;
 import ra.project_md4_tqthang.repository.IUserRepository;
 import ra.project_md4_tqthang.security.principal.UserDetailCustom;
 import ra.project_md4_tqthang.service.ICartService;
 import ra.project_md4_tqthang.service.IOrderService;
+import ra.project_md4_tqthang.service.impl.AddressServiceImpl;
 import ra.project_md4_tqthang.service.impl.UserServiceImpl;
+import ra.project_md4_tqthang.service.impl.WishlistServiceImpl;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -37,6 +37,10 @@ public class UserController {
     private IOrderService orderService;
     @Autowired
     private UserServiceImpl userService;
+    @Autowired
+    private AddressServiceImpl addressService;
+    @Autowired
+    private WishlistServiceImpl wishlistService;
 
 
     //ROLE_USER - GET - Danh sách sản phẩm trong giỏ hàng #4880
@@ -123,7 +127,7 @@ public class UserController {
 
     //ROLE_USER - PUT - Thay đổi mật khẩu (payload : oldPass, newPass, confirmNewPass) #4888
     @PutMapping("/account/change-password")
-    private  ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request) throws CustomException {
+    public   ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request) throws CustomException {
         UserDetailCustom userDetailCustom = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Users users = userRepository.findById(userDetailCustom.getUserId())
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
@@ -132,4 +136,110 @@ public class UserController {
 
     }
 
+    //ROLE_USER - POST - thêm mới địa chỉ #4889
+    @PostMapping("/account/addresses")
+    public ResponseEntity<?> addAddress(@RequestBody NewAddressRequest newAddressRequest){
+        UserDetailCustom userDetailCustom = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Users users = userRepository.findById(userDetailCustom.getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+        addressService.addAddress(users.getUserId(), newAddressRequest);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    //ROLE_USER - DELETE - Xóa 1 địa chỉ theo mã địa chỉ #4890
+    @DeleteMapping("/account/addresses/{addressId}")
+    public ResponseEntity<?> deleteAddress(@PathVariable Long addressId){
+        UserDetailCustom userDetailCustom = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Users users = userRepository.findById(userDetailCustom.getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+        addressService.deleteAddress(users.getUserId(), addressId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    //ROLE_USER - GET - lấy ra danh sách địa chỉ của người dùng #4891
+    @GetMapping("/account/addresses")
+    public ResponseEntity<List<Address>> getAddresses(){
+        UserDetailCustom userDetailCustom = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Users users = userRepository.findById(userDetailCustom.getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+        return new ResponseEntity<>(addressService.getAddressList(users.getUserId()), HttpStatus.OK);
+    }
+
+    //ROLE_USER - GET - lấy địa chỉ người dùng theo addressId  #4892
+    @GetMapping("/account/addresses/{addressId}")
+    public ResponseEntity<Address> getAddress(@PathVariable Long addressId){
+        UserDetailCustom userDetailCustom = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Users users = userRepository.findById(userDetailCustom.getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+        Address address = addressService.getAddress(users.getUserId(), addressId);
+        return new ResponseEntity<>(address, HttpStatus.OK);
+    }
+
+    //ROLE_USER - GET - lấy ra danh sách lịch sử mua hàng #4893
+    @GetMapping("/history")
+    public ResponseEntity<List<Order>> getHistory(){
+        UserDetailCustom userDetailCustom = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Users users = userRepository.findById(userDetailCustom.getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+        return new ResponseEntity<>(orderService.findByUserId(users.getUserId()), HttpStatus.OK);
+    }
+
+    //ROLE_USER - GET - lấy ra chi tiết đơn hàng theo số serial  #4894
+    @GetMapping("/history/{serialNumber}")
+    public ResponseEntity<Order> getHistory(@PathVariable String serialNumber){
+        UserDetailCustom userDetailCustom = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Users users = userRepository.findById(userDetailCustom.getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+        return new ResponseEntity<>(orderService.findBySerialNumber(users.getUserId(),serialNumber), HttpStatus.OK);
+    }
+
+    //ROLE_USER - GET - lấy ra danh sách lịch sử đơn hàng theo trạng thái đơn hàng #4895
+    @GetMapping("/history/{orderStatus}")
+    public ResponseEntity<List<Order>> getUserOrderHistoryByStatus(@PathVariable OrderStatus orderStatus){
+        UserDetailCustom userDetailCustom = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Users users = userRepository.findById(userDetailCustom.getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+        List<Order> orderList = orderService.getUserOrderHistoryByStatus(users.getUserId(), orderStatus);
+        return new ResponseEntity<>(orderList,HttpStatus.OK);
+    }
+
+    //ROLE_USER - PUT - Hủy đơn hàng đang trong trạng thái chờ xác nhận  #4896
+    @PutMapping("/history/{orderId}/cancel")
+    public ResponseEntity<?> cancelOrder(@PathVariable Long orderId) throws CustomException {
+        UserDetailCustom userDetailCustom = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Users users = userRepository.findById(userDetailCustom.getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+        orderService.cancelOrder(users.getUserId(),orderId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    //ROLE_USER - POST-Thêm mới 1 sản phẩm vào danh sách yêu thích (payload : productId ) #4897
+    @PostMapping("/wish-list")
+    public ResponseEntity<?> addToWishlist(@RequestBody WishlistRequest wishlistRequest) throws CustomException {
+        UserDetailCustom userDetailCustom = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Users users = userRepository.findById(userDetailCustom.getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+        wishlistService.addToWishlist(users.getUserId(), wishlistRequest);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    //ROLE_USER - GET - Lấy ra danh sách yêu thích #4898
+    @GetMapping("/wish-list")
+    public ResponseEntity<List<WishList>> getWishlistByUser(){
+        UserDetailCustom userDetailCustom = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Users users = userRepository.findById(userDetailCustom.getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+        List<WishList> wishLists = wishlistService.getUserWishlist(users.getUserId());
+        return new ResponseEntity<>(wishLists,HttpStatus.OK);
+    }
+
+    //ROLE_USER - DELETE - Xóa sản phẩm ra khỏi danh sách yêu thích  #4899
+    @DeleteMapping("/wish-list/{wishListId}")
+    public ResponseEntity<?> deleteWishlist(@PathVariable Long wishListId){
+        UserDetailCustom userDetailCustom = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Users users = userRepository.findById(userDetailCustom.getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+        wishlistService.removeFromWishList(users.getUserId(),wishListId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
