@@ -7,8 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ra.project_md4_tqthang.constants.EHttpStatus;
 import ra.project_md4_tqthang.constants.OrderStatus;
+import ra.project_md4_tqthang.dto.request.CategoryRequest;
 import ra.project_md4_tqthang.dto.request.OrderStatusRequest;
 import ra.project_md4_tqthang.dto.request.PagingRequest;
+import ra.project_md4_tqthang.dto.request.ProductRequest;
 import ra.project_md4_tqthang.dto.response.ResponseWrapper;
 import ra.project_md4_tqthang.exception.CustomException;
 import ra.project_md4_tqthang.model.*;
@@ -32,7 +34,7 @@ public class AdminController {
 
     //ROLE_ADMIN - GET - Tìm kiếm người dùng theo tên    #4905
     @GetMapping("/users/search")
-    public ResponseEntity<List<Users>> searchUsers(@RequestParam String fullName) {
+    public ResponseEntity<List<Users>> searchUsers(@RequestParam("fullName") String fullName) {
         List<Users> users = userService.searchUserByName(fullName);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
@@ -74,9 +76,8 @@ public class AdminController {
 
     //ROLE_ADMIN - PUT - Chỉnh sửa thông tin danh mục #4914
     @PutMapping("/categories/{categoryId}")
-    public ResponseEntity<Category> updateCategory(@PathVariable Long categoryId) throws CustomException {
-        Category category = categoryService.findCateById(categoryId);
-        return new ResponseEntity<>(categoryService.updateCategory(category), HttpStatus.OK);
+    public ResponseEntity<Category> updateCategory(@PathVariable Long categoryId, @RequestBody CategoryRequest categoryRequest) throws CustomException {
+        return new ResponseEntity<>(categoryService.updateCategory(categoryRequest,categoryId), HttpStatus.OK);
     }
 
     //ROLE_ADMIN - POST - Thêm mới danh mục  #4913
@@ -113,9 +114,8 @@ public class AdminController {
 
     //ROLE_ADMIN - PUT - Chỉnh sửa thông tin sản phẩm #4909
     @PutMapping("/products/{productId}")
-    public ResponseEntity<Products> updateProduct(@PathVariable Long productId){
-        Products products = productService.getProductInfo(productId);
-        return new ResponseEntity<>(productService.updateProduct(products), HttpStatus.OK);
+    public ResponseEntity<Products> updateProduct(@PathVariable Long productId, @RequestBody ProductRequest productRequest){
+        return new ResponseEntity<>(productService.updateProduct(productRequest,productId), HttpStatus.OK);
     }
 
     //ROLE_ADMIN - POST - Thêm mới sản phẩm #4908

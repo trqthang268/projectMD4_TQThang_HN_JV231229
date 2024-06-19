@@ -47,6 +47,7 @@ public class OrderServiceImpl implements IOrderService {
          order.setReceiveName(checkoutRequest.getReceiveName());
          order.setReceivePhone(checkoutRequest.getReceiveAddress());
          order.setReceivePhone(checkoutRequest.getReceivePhone());
+         order.setNote(checkoutRequest.getNote());
          order.setCreatedAt(new Date());
          order.setReceivedAt(new Date(System.currentTimeMillis()+(4*24*60*60*1000))); // 4 ngay sau
 

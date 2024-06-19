@@ -48,13 +48,13 @@ public class AuthServiceImpl implements IAuthService {
         } else {
             formRegister.getRoles().forEach(role -> {
                 switch (role) {
-                    case "admin":
+                    case "ADMIN":
                         roles.add(roleService.findByRoleName(RoleName.ROLE_ADMIN));
                         break;
-                    case "user":
+                    case "USER":
                         roles.add(roleService.findByRoleName(RoleName.ROLE_USER));
                         break;
-                    case "moderator":
+                    case "MODERATOR":
                         roles.add(roleService.findByRoleName(RoleName.ROLE_MODERATOR));
                         break;
                     default:

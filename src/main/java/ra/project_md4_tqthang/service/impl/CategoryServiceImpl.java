@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import ra.project_md4_tqthang.dto.request.CategoryRequest;
 import ra.project_md4_tqthang.exception.CustomException;
 import ra.project_md4_tqthang.model.Category;
 import ra.project_md4_tqthang.repository.ICategoryRepository;
@@ -47,8 +48,10 @@ public class CategoryServiceImpl implements ICategoryService {
     }
 
     @Override
-    public Category updateCategory(Category category) throws CustomException {
-        categoryRepository.findById(category.getCategoryId()).orElseThrow(()->new NoSuchElementException("Khong ton tai danh muc nay"));
+    public Category updateCategory(CategoryRequest categoryRequest,Long cateId) throws CustomException {
+        Category category = categoryRepository.findById(cateId).orElseThrow(()->new NoSuchElementException("Khong ton tai danh muc nay"));
+        category.setCategoryName(categoryRequest.getCategoryName());
+        category.setDescription(categoryRequest.getDescription());
         return categoryRepository.save(category);
     }
 

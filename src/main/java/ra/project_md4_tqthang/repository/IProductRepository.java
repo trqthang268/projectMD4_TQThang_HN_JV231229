@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import ra.project_md4_tqthang.model.Products;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface IProductRepository extends JpaRepository<Products, Long> , PagingAndSortingRepository<Products, Long> {
@@ -30,4 +31,5 @@ public interface IProductRepository extends JpaRepository<Products, Long> , Pagi
     @Query("select p from Products p join OrderDetail od on p.productId=od.products.productId group by p.productId order by sum(od.orderQuantity) desc")
     List<Products> getBestSellerProducts();
 
+    Optional<Products> findProductsByProductName(String productName);
 }

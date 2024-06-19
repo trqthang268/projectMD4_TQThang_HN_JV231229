@@ -35,7 +35,7 @@ public class AuthenticationController {
 
     //PermitAll - POST - Đăng nhập tài khoản bằng username và password #4871
     @PostMapping("/sign-in")
-    public ResponseEntity<?> handleRegister(@RequestBody FormLogin formLogin){
+    public ResponseEntity<?> handleLogin(@RequestBody FormLogin formLogin){
         return new ResponseEntity<>(
                 ResponseWrapper.builder()
                         .eHttpStatus(EHttpStatus.SUCCESS)

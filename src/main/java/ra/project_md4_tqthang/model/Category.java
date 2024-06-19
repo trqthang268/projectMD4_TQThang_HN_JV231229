@@ -2,6 +2,7 @@ package ra.project_md4_tqthang.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ra.project_md4_tqthang.validation.CategoryNameExist;
 
 @Entity
 @Table(name = "categories")
@@ -16,6 +17,7 @@ public class Category {
     @Column(name = "category_id", nullable = false)
     private Long categoryId;
 
+    @CategoryNameExist
     @Column(nullable = false, length = 100)
     private String categoryName;
 

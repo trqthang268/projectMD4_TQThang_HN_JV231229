@@ -20,29 +20,38 @@ public class Users {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
     private Long userId;
+
     @Column(unique = true, nullable = false, length = 100)
     private String userName;
+
     @Column(unique = true, nullable = false)
     @Pattern(regexp = "^((?!\\.)[\\w\\-_.]*[^.])(@\\w+)(\\.\\w+(\\.\\w+)?[^.\\W])$",message = "Invalid email format!")
     private String email;
+
     @Column(nullable = false)
     private String password;
+
     @Column(nullable = false)
     private String fullName;
+
     @Column(nullable = false, length = 15)
     @Pattern(regexp = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$",message = "Invalid phone format!")
     private String phoneNumber;
+
     @Column(nullable = false)
     private String address;
+
     @Column(nullable = false)
     private Boolean status;
+
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     @Temporal(TemporalType.DATE)
     private Date createAt;
+
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     @Temporal(TemporalType.DATE)
     private Date updateAt;
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

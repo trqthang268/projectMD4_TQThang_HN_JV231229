@@ -16,4 +16,6 @@ public interface ICategoryRepository extends JpaRepository<Category, Long> , Pag
 
     @Query("select c from Category c")
     Page<Category> findAllCategory(Pageable pageable);
+
+    boolean existsByCategoryName(String categoryName);
 }

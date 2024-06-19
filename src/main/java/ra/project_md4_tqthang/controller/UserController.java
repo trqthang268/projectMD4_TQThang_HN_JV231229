@@ -64,7 +64,7 @@ public class UserController {
 
     //ROLE_USER - PUT - Thay đổi số lượng đặt hàng của 1 sản phẩm (payload :quantity) #4882
     @PutMapping("/cart/items/{cartItemId}")
-    public ResponseEntity<?> updateCartItem(@PathVariable Long cartItemId, @RequestBody AddToCartRequest request) {
+    public ResponseEntity<?> updateCartItem(@PathVariable Long cartItemId, @RequestBody UpdateCartQuantityRequest request) {
         UserDetailCustom userDetailCustom = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Users users = userRepository.findUsersByUserName(userDetailCustom.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));

@@ -1,6 +1,7 @@
 package ra.project_md4_tqthang.service;
 
 import org.springframework.data.domain.Page;
+import ra.project_md4_tqthang.dto.request.ProductRequest;
 import ra.project_md4_tqthang.model.Products;
 
 import java.util.List;
@@ -13,6 +14,6 @@ public interface IProductService {
     List<Products> searchProductsByNameOrDesc(String nameOrDesc);
     List<Products> getBestSellerProduct();
     void deleteProduct(Long productId);
-    Products updateProduct(Products product);
+    Products updateProduct(ProductRequest productRequest,Long productId);
     Products addProduct(Products product);
 }
