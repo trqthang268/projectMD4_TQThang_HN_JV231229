@@ -33,7 +33,7 @@ public class CartServiceImpl implements ICartService {
     }
 
     @Override
-    public void addToCart(Long userId, AddToCartRequest request) {
+    public ShoppingCart addToCart(Long userId, AddToCartRequest request) {
         Users users = userRepository.findById(userId).orElseThrow(()->new NoSuchElementException("User not found"));
         Products products = productRepository.findById(request.getProductId()).orElseThrow(()->new NoSuchElementException("Product not found"));
         ShoppingCart cart = cartRepository.findByUserAndProduct(users,products).orElse(new ShoppingCart());
@@ -44,14 +44,14 @@ public class CartServiceImpl implements ICartService {
         }else {
             cart.setOrderQuantity(cart.getOrderQuantity()+request.getOrderQuantity());
         }
-        cartRepository.save(cart);
+        return cartRepository.save(cart);
     }
 
     @Override
-    public void updateCartItemQuantity(Long cartId, Integer quantity) {
+    public ShoppingCart updateCartItemQuantity(Long cartId, Integer quantity) {
         ShoppingCart cartItem = cartRepository.findById(cartId).orElseThrow(()->new NoSuchElementException("Cart not found"));
         cartItem.setOrderQuantity(quantity);
-        cartRepository.save(cartItem);
+        return cartRepository.save(cartItem);
     }
 
     @Override

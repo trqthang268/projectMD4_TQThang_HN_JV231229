@@ -14,9 +14,9 @@ public interface IOrderService {
     List<Order> getAllOrders();
     List<Order> getOrderByStatus(OrderStatus status);
     List<OrderDetail> getOrderDetailsByOrderId(Long orderId);
-    void updateOrderStatus(Long orderId, OrderStatusRequest statusRequest);
+    Order updateOrderStatus(Long orderId, OrderStatusRequest statusRequest);
     List<Order> findByUserId(Long userId);
     Order findBySerialNumber(Long userId, String serialNumber);
     List<Order> getUserOrderHistoryByStatus(Long userId, OrderStatus status);
-    void cancelOrder(Long userId,Long orderId) throws CustomException;
+    Order cancelOrder(Long userId,Long orderId) throws CustomException;
 }

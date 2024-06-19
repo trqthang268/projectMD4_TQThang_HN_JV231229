@@ -12,7 +12,7 @@ public interface IUserService {
     List<Users> searchUserByName(String fullName);
     Users searchUserById(Long id);
     Page<Users> getUsersByPage(String searchName, Integer page, Integer pageItem, String orderBy, String orderDirection);
-    void updateUser(Long userId, UpdateUserRequest updateUserRequest);
-    void changePassword(Long userId, ChangePasswordRequest changePasswordRequest) throws CustomException;
+    Users updateUser(Long userId, UpdateUserRequest updateUserRequest);
+    Users changePassword(Long userId, ChangePasswordRequest changePasswordRequest) throws CustomException;
 
 }

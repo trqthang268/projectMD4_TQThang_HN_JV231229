@@ -10,8 +10,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import ra.project_md4_tqthang.constants.EHttpStatus;
 import ra.project_md4_tqthang.constants.OrderStatus;
 import ra.project_md4_tqthang.dto.request.*;
+import ra.project_md4_tqthang.dto.response.ResponseWrapper;
 import ra.project_md4_tqthang.exception.CustomException;
 import ra.project_md4_tqthang.model.*;
 import ra.project_md4_tqthang.repository.IUserRepository;
@@ -58,8 +60,8 @@ public class UserController {
         UserDetailCustom userDetailCustom = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Users users = userRepository.findUsersByUserName(userDetailCustom.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-        cartService.addToCart(users.getUserId(), request);
-        return new ResponseEntity<>(HttpStatus.OK);
+        ShoppingCart shoppingCart = cartService.addToCart(users.getUserId(), request);
+        return new ResponseEntity<>(shoppingCart,HttpStatus.OK);
     }
 
     //ROLE_USER - PUT - Thay đổi số lượng đặt hàng của 1 sản phẩm (payload :quantity) #4882
@@ -72,8 +74,7 @@ public class UserController {
         if (!cartItem.getUser().getUserId().equals(users.getUserId())) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        cartService.updateCartItemQuantity(cartItemId, request.getOrderQuantity());
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(cartService.updateCartItemQuantity(cartItemId, request.getOrderQuantity()),HttpStatus.OK);
     }
 
     //ROLE_USER - DELETE - Xóa 1 sản phẩm trong giỏ hàng  #4883
@@ -121,8 +122,7 @@ public class UserController {
         UserDetailCustom userDetailCustom = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Users users = userRepository.findUsersByUserName(userDetailCustom.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-        userService.updateUser(users.getUserId(), updateUserRequest);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(userService.updateUser(users.getUserId(), updateUserRequest),HttpStatus.OK);
     }
 
     //ROLE_USER - PUT - Thay đổi mật khẩu (payload : oldPass, newPass, confirmNewPass) #4888
@@ -131,8 +131,10 @@ public class UserController {
         UserDetailCustom userDetailCustom = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Users users = userRepository.findById(userDetailCustom.getUserId())
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-        userService.changePassword(users.getUserId(), request);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(ResponseWrapper.builder()
+                .data(userService.changePassword(users.getUserId(), request))
+                .eHttpStatus(EHttpStatus.SUCCESS)
+                .build(),HttpStatus.OK);
 
     }
 
@@ -142,8 +144,7 @@ public class UserController {
         UserDetailCustom userDetailCustom = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Users users = userRepository.findById(userDetailCustom.getUserId())
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-        addressService.addAddress(users.getUserId(), newAddressRequest);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(addressService.addAddress(users.getUserId(), newAddressRequest),HttpStatus.CREATED);
     }
 
     //ROLE_USER - DELETE - Xóa 1 địa chỉ theo mã địa chỉ #4890
@@ -209,8 +210,8 @@ public class UserController {
         UserDetailCustom userDetailCustom = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Users users = userRepository.findById(userDetailCustom.getUserId())
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-        orderService.cancelOrder(users.getUserId(),orderId);
-        return new ResponseEntity<>(HttpStatus.OK);
+
+        return new ResponseEntity<>(orderService.cancelOrder(users.getUserId(),orderId),HttpStatus.OK);
     }
 
     //ROLE_USER - POST-Thêm mới 1 sản phẩm vào danh sách yêu thích (payload : productId ) #4897
@@ -219,8 +220,7 @@ public class UserController {
         UserDetailCustom userDetailCustom = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Users users = userRepository.findById(userDetailCustom.getUserId())
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-        wishlistService.addToWishlist(users.getUserId(), wishlistRequest);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(wishlistService.addToWishlist(users.getUserId(), wishlistRequest), HttpStatus.CREATED);
     }
 
     //ROLE_USER - GET - Lấy ra danh sách yêu thích #4898
@@ -240,6 +240,6 @@ public class UserController {
         Users users = userRepository.findById(userDetailCustom.getUserId())
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
         wishlistService.removeFromWishList(users.getUserId(),wishListId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

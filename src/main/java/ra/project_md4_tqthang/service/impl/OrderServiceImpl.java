@@ -103,11 +103,11 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public void updateOrderStatus(Long orderId, OrderStatusRequest statusRequest) {
+    public Order updateOrderStatus(Long orderId, OrderStatusRequest statusRequest) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(()->new NoSuchElementException("order not found"));
         order.setOrderStatus(statusRequest.getOrderStatus());
-        orderRepository.save(order);
+        return orderRepository.save(order);
     }
 
     @Override
@@ -140,7 +140,7 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public void cancelOrder(Long userId, Long orderId) throws CustomException {
+    public Order cancelOrder(Long userId, Long orderId) throws CustomException {
         Users users = userRepository.findById(userId)
                 .orElseThrow(()->new NoSuchElementException("user not found"));
         Order order = orderRepository.findByOrderIdAndUser(orderId,users)
@@ -148,8 +148,6 @@ public class OrderServiceImpl implements IOrderService {
         if (order.getOrderStatus()!=OrderStatus.WAITING){
             throw new CustomException("Order cannot be canceled as it is not in WAITING", HttpStatus.BAD_REQUEST);
         }
-        order.setOrderStatus(OrderStatus.CANCEL);
-        orderRepository.save(order);
         //tra lai stock
         List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrder_OrderId(orderId);
         for (OrderDetail detail : orderDetails) {
@@ -157,5 +155,7 @@ public class OrderServiceImpl implements IOrderService {
             products.setStockQuantity(products.getStockQuantity()+detail.getOrderQuantity());
             productRepository.save(products);
         }
+        order.setOrderStatus(OrderStatus.CANCEL);
+        return orderRepository.save(order);
     }
 }

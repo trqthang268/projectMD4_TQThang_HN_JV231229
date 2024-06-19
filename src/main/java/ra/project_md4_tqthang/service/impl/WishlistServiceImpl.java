@@ -26,7 +26,7 @@ public class WishlistServiceImpl implements IWishlistService {
     private IProductRepository productRepository;
 
     @Override
-    public void addToWishlist(Long userId, WishlistRequest wishlistRequest) throws CustomException {
+    public WishList addToWishlist(Long userId, WishlistRequest wishlistRequest) throws CustomException {
         Users users = userRepository.findById(userId)
                 .orElseThrow(()->new NoSuchElementException("user not found"));
         Products products = productRepository.findById(wishlistRequest.getProductId())
@@ -38,7 +38,7 @@ public class WishlistServiceImpl implements IWishlistService {
         WishList newWishList = new WishList();
         newWishList.setProduct(products);
         newWishList.setUser(users);
-        wishlistRepository.save(newWishList);
+        return wishlistRepository.save(newWishList);
     }
 
     @Override

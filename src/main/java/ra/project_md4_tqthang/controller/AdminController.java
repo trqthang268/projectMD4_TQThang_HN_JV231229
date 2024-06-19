@@ -165,7 +165,10 @@ public class AdminController {
     @PutMapping("/orders/{orderId}/status")
     public ResponseEntity<ResponseWrapper<Order>> updateOrderStatus(@PathVariable Long orderId, @RequestBody OrderStatusRequest orderStatusRequest){
         orderService.updateOrderStatus(orderId, orderStatusRequest);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(ResponseWrapper.<Order>builder()
+                .data(orderService.updateOrderStatus(orderId, orderStatusRequest))
+                .eHttpStatus(EHttpStatus.SUCCESS)
+                .build(),HttpStatus.OK);
 
     }
 }

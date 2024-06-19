@@ -21,7 +21,7 @@ public class AddressServiceImpl implements IAddressService {
     private IUserRepository userRepository;
 
     @Override
-    public void addAddress(Long userId, NewAddressRequest addressRequest) {
+    public Address addAddress(Long userId, NewAddressRequest addressRequest) {
         Users users = userRepository.findById(userId)
                 .orElseThrow(()->new NoSuchElementException("User not found"));
         Address address = new Address();
@@ -30,7 +30,7 @@ public class AddressServiceImpl implements IAddressService {
         address.setReceiveName(addressRequest.getReceiveName());
         address.setPhone(addressRequest.getPhone());
 
-        addressRepository.save(address);
+        return addressRepository.save(address);
     }
 
     @Override

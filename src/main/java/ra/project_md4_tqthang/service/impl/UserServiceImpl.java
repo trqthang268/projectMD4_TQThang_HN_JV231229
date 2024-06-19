@@ -66,7 +66,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public void updateUser(Long userId, UpdateUserRequest updateUserRequest) {
+    public Users updateUser(Long userId, UpdateUserRequest updateUserRequest) {
         Users user = userRepository.findById(userId)
                 .orElseThrow(()->new NoSuchElementException("user not found"));
         user.setUserName(updateUserRequest.getUserName());
@@ -76,12 +76,12 @@ public class UserServiceImpl implements IUserService {
         user.setAddress(updateUserRequest.getAddress());
         user.setUpdateAt(new Date());
 
-        userRepository.save(user);
+        return userRepository.save(user);
 
     }
 
     @Override
-    public void changePassword(Long userId, ChangePasswordRequest changePasswordRequest) throws CustomException {
+    public Users changePassword(Long userId, ChangePasswordRequest changePasswordRequest) throws CustomException {
         Users users = userRepository.findById(userId)
                 .orElseThrow(()->new NoSuchElementException("user not found"));
         if (!passwordEncoder.matches(changePasswordRequest.getOldPassword(), users.getPassword())) {
@@ -91,6 +91,6 @@ public class UserServiceImpl implements IUserService {
             throw new CustomException("New passwords do not match", HttpStatus.BAD_REQUEST);
         }
         users.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
-        userRepository.save(users);
+        return userRepository.save(users);
     }
 }

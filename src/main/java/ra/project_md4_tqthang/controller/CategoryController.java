@@ -23,7 +23,6 @@ public class CategoryController {
     public ResponseEntity<List<Category>> getAllCategories() {
         List<Category> categoryList = categoryService.getCategories();
         return new ResponseEntity<>(categoryList, HttpStatus.OK);
-
     }
 
 
