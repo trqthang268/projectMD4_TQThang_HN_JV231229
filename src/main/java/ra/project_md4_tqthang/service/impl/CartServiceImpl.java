@@ -72,6 +72,6 @@ public class CartServiceImpl implements ICartService {
     @Override
     public void clearCart(Long userId) {
         Users users = userRepository.findById(userId).orElseThrow(()->new NoSuchElementException("User not found"));
-        cartRepository.deleteByUser(users);
+        cartRepository.deleteShoppingCartByUser_UserId(users.getUserId());
     }
 }

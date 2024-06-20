@@ -17,21 +17,21 @@ import java.util.Date;
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id", nullable = false)
+    @Column(name = "order_id")
     private Long orderId;
 
-    @Column(nullable = false, unique = true, length = 100)
+    @Column(unique = true, length = 100)
     private String serialNumber;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private Users user;
 
-    @Column(nullable = false)
+    @Column()
     private Double totalPrice;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column()
     private OrderStatus orderStatus;
 
     @Column(length = 100)
@@ -46,7 +46,7 @@ public class Order {
     @Column(length = 15)
     private String receivePhone;
 
-    @Column(nullable = false)
+    @Column()
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
     private Date createdAt ;//= new Date();

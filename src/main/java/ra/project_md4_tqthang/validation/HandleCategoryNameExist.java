@@ -13,6 +13,6 @@ public class HandleCategoryNameExist implements ConstraintValidator<CategoryName
 
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
-        return categoryRepository.existsByCategoryName(s);
+        return categoryRepository.findCategoryByCategoryName(s).isEmpty();
     }
 }

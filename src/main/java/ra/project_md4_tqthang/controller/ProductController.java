@@ -43,15 +43,15 @@ public class ProductController {
         List<Products> products = productService.getAllProducts(
                 pagingRequest.getPage()-1,
                 pagingRequest.getPageItem(),
-                pagingRequest.getOrderDirection(),
-                pagingRequest.getSortBy()
+                pagingRequest.getSortBy(),
+                pagingRequest.getOrderDirection()
         ).getContent();
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
     //PermitAll - GET - Tìm kiếm sản phẩm theo tên hoặc mô tả #4873
     @GetMapping("/search")
-    public ResponseEntity<List<Products>> getProductsByNameOrDescription(@RequestParam String nameOrDescription) {
+    public ResponseEntity<List<Products>> getProductsByNameOrDescription(@RequestParam("nameOrDescription") String nameOrDescription) {
         List<Products> products = productService.searchProductsByNameOrDesc(nameOrDescription);
         return new ResponseEntity<>(products, HttpStatus.OK);
     }

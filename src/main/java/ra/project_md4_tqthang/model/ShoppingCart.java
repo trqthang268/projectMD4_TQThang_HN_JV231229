@@ -17,13 +17,13 @@ public class ShoppingCart {
     private Long shoppingCartId;
 
     @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false,referencedColumnName = "product_id")
+    @JoinColumn(name = "product_id", referencedColumnName = "product_id")
     private Products product;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false,referencedColumnName = "user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private Users user;
 
-    @Column(nullable = false)
+    @Column()
     private Integer orderQuantity;
 }

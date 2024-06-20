@@ -3,6 +3,7 @@ package ra.project_md4_tqthang.advice;
 import org.hibernate.exception.DataException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -55,6 +56,11 @@ public class ApplicationHandler {
     @ExceptionHandler(RuntimeException.class)
     public DataError<?> handleRuntimeException(RuntimeException e){
         return new DataError<>("Runtime Error",e.getLocalizedMessage(),HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
+    public DataError<?> handleHttpMediaTypeNotAcceptableException(HttpMediaTypeNotAcceptableException e) {
+        return new DataError<>("Data Type Not Acceptable",e.getLocalizedMessage(),HttpStatus.BAD_REQUEST);
     }
 
 }

@@ -14,5 +14,5 @@ public interface IUserService {
     Page<Users> getUsersByPage(String searchName, Integer page, Integer pageItem, String orderBy, String orderDirection);
     Users updateUser(Long userId, UpdateUserRequest updateUserRequest);
     Users changePassword(Long userId, ChangePasswordRequest changePasswordRequest) throws CustomException;
-
+    Users updateStatus(Long id);
 }

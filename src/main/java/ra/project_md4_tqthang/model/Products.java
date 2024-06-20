@@ -17,31 +17,31 @@ import java.util.UUID;
 public class Products {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id", nullable = false)
+    @Column(name = "product_id")
     private Long productId;
 
-    @Column(nullable = false, unique = true, length = 100)
+    @Column(unique = true, length = 100)
     private String sku = UUID.randomUUID().toString();
 
-    @Column(nullable = false, length = 100)
+    @Column(length = 100)
     private String productName;
 
     private String description;
 
-    @Column(nullable = false)
+    @Column()
     private Double unitPrice;
 
-    @Column(nullable = false)
+    @Column()
     private Integer stockQuantity;
 
     @Column(length = 255)
     private String image;
 
     @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false,referencedColumnName = "category_id")
+    @JoinColumn(name = "category_id",referencedColumnName = "category_id")
     private Category category;
 
-    @Column(nullable = false)
+    @Column()
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
     private Date createdAt;

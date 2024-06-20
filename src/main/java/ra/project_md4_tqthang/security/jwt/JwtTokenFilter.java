@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import ra.project_md4_tqthang.security.principal.UserDetailCustom;
 import ra.project_md4_tqthang.security.principal.UserDetailCustomService;
 
 import java.io.IOException;
@@ -28,7 +29,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String token = getTokenFromRequest(request);
         if (token != null && jwtProvider.validateToken(token)) {
             String username = jwtProvider.getUsernameFromToken(token);
-            UserDetails userDetails = userDetailCustomService.loadUserByUsername(username);
+            UserDetailCustom userDetails = (UserDetailCustom) userDetailCustomService.loadUserByUsername(username);
             Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }

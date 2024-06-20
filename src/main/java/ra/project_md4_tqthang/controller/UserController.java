@@ -1,5 +1,6 @@
 package ra.project_md4_tqthang.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -140,7 +141,7 @@ public class UserController {
 
     //ROLE_USER - POST - thêm mới địa chỉ #4889
     @PostMapping("/account/addresses")
-    public ResponseEntity<?> addAddress(@RequestBody NewAddressRequest newAddressRequest){
+    public ResponseEntity<?> addAddress(@Valid @RequestBody NewAddressRequest newAddressRequest){
         UserDetailCustom userDetailCustom = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Users users = userRepository.findById(userDetailCustom.getUserId())
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
@@ -186,8 +187,8 @@ public class UserController {
     }
 
     //ROLE_USER - GET - lấy ra chi tiết đơn hàng theo số serial  #4894
-    @GetMapping("/history/{serialNumber}")
-    public ResponseEntity<Order> getHistory(@PathVariable String serialNumber){
+    @GetMapping("/historys/{serialNumber}")
+    public ResponseEntity<Order> getHistory(@PathVariable("serialNumber") String serialNumber){
         UserDetailCustom userDetailCustom = (UserDetailCustom) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Users users = userRepository.findById(userDetailCustom.getUserId())
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));

@@ -13,14 +13,14 @@ import lombok.*;
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "address_id", nullable = false)
+    @Column(name = "address_id")
     private Long addressId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id",referencedColumnName = "user_id")
     private Users user;
 
-    @Column(nullable = false, name = "full_address")
+    @Column(name = "full_address")
     private String fullAddress;
 
     @Column(length = 15, name = "phone")

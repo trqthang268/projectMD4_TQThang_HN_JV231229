@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ra.project_md4_tqthang.dto.request.NewProductRequest;
 import ra.project_md4_tqthang.dto.request.ProductRequest;
 import ra.project_md4_tqthang.model.Products;
 import ra.project_md4_tqthang.repository.ICategoryRepository;
@@ -18,7 +19,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
-
 public class ProductServiceImpl implements IProductService {
     @Autowired
     private IProductRepository productRepository;
@@ -45,14 +45,17 @@ public class ProductServiceImpl implements IProductService {
         Pageable pageable = null;
         if (orderBy != null && !orderBy.isEmpty()) {
             //co sap xep
-            Sort sort = switch (orderDirection) {
-                case "asc" -> Sort.by(orderBy).ascending();
-                case "desc" -> Sort.by(orderBy).descending();
-                default -> null;
-            };
-            assert sort != null;
+            Sort sort = null;
+            switch (orderDirection) {
+                case "asc":
+                    sort = Sort.by(orderBy).ascending();
+                    break;
+                case "desc":
+                    sort = Sort.by(orderBy).descending();
+                    break;
+            }
             pageable = PageRequest.of(page, pageItem, sort);
-        }else {
+        } else {
             // khong sap xep
             pageable = PageRequest.of(page, pageItem);
         }
@@ -77,19 +80,37 @@ public class ProductServiceImpl implements IProductService {
     @Override
     public Products updateProduct(ProductRequest productRequest, Long productId) {
         Products products = productRepository.findById(productId)
-                .orElseThrow(()-> new NoSuchElementException("Product not found"));
+                .orElseThrow(() -> new NoSuchElementException("Product not found"));
         products.setProductName(productRequest.getProductName());
         products.setDescription(productRequest.getDescription());
         products.setUnitPrice(productRequest.getUnitPrice());
         products.setStockQuantity(productRequest.getStockQuantity());
-        products.setCategory(categoryRepository.findById(productRequest.getCategoryId()).orElseThrow(()-> new NoSuchElementException("Category not found")));
+        products.setCategory(categoryRepository.findById(productRequest.getCategoryId()).orElseThrow(() -> new NoSuchElementException("Category not found")));
         products.setImage(productRequest.getImage());
         products.setUpdatedAt(new Date());
         return productRepository.save(products);
     }
 
     @Override
-    public Products addProduct(Products product) {
-        return productRepository.save(product);
+    public Products addProduct(NewProductRequest productRequest) {
+        Products products = new Products();
+//                Products.builder()
+//                .productName(productRequest.getProductName())
+//                .description(productRequest.getDescription())
+//                .unitPrice(productRequest.getUnitPrice())
+//                .stockQuantity(productRequest.getStockQuantity())
+//                .image(productRequest.getImage())
+//                .createdAt(new Date())
+//                .category(categoryRepository.findById(productRequest.getCategoryId()).orElseThrow(() -> new NoSuchElementException("Category not found")))
+//                .build();
+        products.setProductName(productRequest.getProductName());
+        products.setDescription(productRequest.getDescription());
+        products.setUnitPrice(productRequest.getUnitPrice());
+        products.setStockQuantity(productRequest.getStockQuantity());
+        products.setImage(productRequest.getImage());
+        products.setCreatedAt(new Date());
+        products.setCategory(categoryRepository.findById(productRequest.getCategoryId()).orElseThrow(() -> new NoSuchElementException("Category not found")));
+        productRepository.save(products);
+        return products;
     }
 }

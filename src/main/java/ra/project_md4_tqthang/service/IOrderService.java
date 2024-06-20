@@ -12,9 +12,9 @@ import java.util.List;
 public interface IOrderService {
     void checkout(Long userId, CheckoutRequest checkoutRequest) throws CustomException;
     List<Order> getAllOrders();
-    List<Order> getOrderByStatus(OrderStatus status);
+    List<Order> getOrderByStatus(String status);
     List<OrderDetail> getOrderDetailsByOrderId(Long orderId);
-    Order updateOrderStatus(Long orderId, OrderStatusRequest statusRequest);
+    Order updateOrderStatus(Long orderId, String statusRequest);
     List<Order> findByUserId(Long userId);
     Order findBySerialNumber(Long userId, String serialNumber);
     List<Order> getUserOrderHistoryByStatus(Long userId, OrderStatus status);

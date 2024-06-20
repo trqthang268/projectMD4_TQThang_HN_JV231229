@@ -18,4 +18,5 @@ public class CategoryRequest {
     @NotBlank(message = "Category name is blank")
     private String categoryName;
     private String description;
+    private Boolean status;
 }

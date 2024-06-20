@@ -21,10 +21,10 @@ public class FormRegister {
     @NotBlank(message = "Full name is blank")
     private String fullName;
 
+    @EmailExist
     @NotEmpty(message = "Email is empty")
     @NotBlank(message = "Email is blank")
     @Pattern(regexp = "^((?!\\.)[\\w\\-_.]*[^.])(@\\w+)(\\.\\w+(\\.\\w+)?[^.\\W])$",message = "Invalid email format!")
-    @EmailExist
     private String email;
 
     @NotEmpty(message = "Password is empty")

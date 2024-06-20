@@ -14,14 +14,14 @@ public class JwtProvider {
     @Value("${jwt_secret}")
     private String SECRET_KEY;
     @Value("${jwt_expiration}")
-    private long EXPIRATION;
+    private int EXPIRATION;
 
     public String generateToken(UserDetailCustom userDetail) {
         return Jwts.builder()
                 .setSubject(userDetail.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime()+EXPIRATION))
-                .signWith(SignatureAlgorithm.ES384,SECRET_KEY)
+                .signWith(SignatureAlgorithm.HS384,SECRET_KEY)
                 .compact();
     }
 
@@ -44,7 +44,7 @@ public class JwtProvider {
     }
 
     public String getUsernameFromToken(String token) {
-        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJwt(token).getBody().getSubject();
+        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().getSubject();
     }
 
 

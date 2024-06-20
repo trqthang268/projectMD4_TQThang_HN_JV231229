@@ -1,5 +1,6 @@
 package ra.project_md4_tqthang.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -7,13 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ra.project_md4_tqthang.constants.EHttpStatus;
 import ra.project_md4_tqthang.constants.OrderStatus;
-import ra.project_md4_tqthang.dto.request.CategoryRequest;
-import ra.project_md4_tqthang.dto.request.OrderStatusRequest;
-import ra.project_md4_tqthang.dto.request.PagingRequest;
-import ra.project_md4_tqthang.dto.request.ProductRequest;
+import ra.project_md4_tqthang.dto.request.*;
 import ra.project_md4_tqthang.dto.response.ResponseWrapper;
 import ra.project_md4_tqthang.exception.CustomException;
 import ra.project_md4_tqthang.model.*;
+import ra.project_md4_tqthang.service.IProductService;
 import ra.project_md4_tqthang.service.impl.*;
 
 import java.util.List;
@@ -28,7 +27,7 @@ public class AdminController {
     @Autowired
     private CategoryServiceImpl categoryService;
     @Autowired
-    private ProductServiceImpl productService;
+    private IProductService productService;
     @Autowired
     private OrderServiceImpl orderService;
 
@@ -47,10 +46,9 @@ public class AdminController {
     }
 
     //ROLE_ADMIN - GET - Khóa / Mở khóa người dùng #4903
-    @GetMapping("/users/{userId}")
+    @PutMapping("/users/{userId}")
     public ResponseEntity<Boolean> getUserById(@PathVariable Long userId){
-        Users users = userService.searchUserById(userId);
-        users.setStatus(!users.getStatus());
+        Users users = userService.updateStatus(userId);
         return new ResponseEntity<>(users.getStatus(), HttpStatus.OK);
     }
 
@@ -76,13 +74,13 @@ public class AdminController {
 
     //ROLE_ADMIN - PUT - Chỉnh sửa thông tin danh mục #4914
     @PutMapping("/categories/{categoryId}")
-    public ResponseEntity<Category> updateCategory(@PathVariable Long categoryId, @RequestBody CategoryRequest categoryRequest) throws CustomException {
+    public ResponseEntity<Category> updateCategory(@Valid @RequestBody CategoryRequest categoryRequest, @PathVariable Long categoryId) throws CustomException {
         return new ResponseEntity<>(categoryService.updateCategory(categoryRequest,categoryId), HttpStatus.OK);
     }
 
     //ROLE_ADMIN - POST - Thêm mới danh mục  #4913
     @PostMapping("/categories")
-    public ResponseEntity<Category> addCategory(@RequestBody Category category) throws CustomException {
+    public ResponseEntity<Category> addCategory(@RequestBody CategoryRequest category) throws CustomException {
         return new ResponseEntity<>(categoryService.addCategory(category), HttpStatus.CREATED);
     }
 
@@ -99,8 +97,8 @@ public class AdminController {
         List<Category> categories = categoryService.getCategoryByPage(
                 pagingRequest.getPage()-1,
                 pagingRequest.getPageItem(),
-                pagingRequest.getOrderDirection(),
-                pagingRequest.getSortBy()
+                pagingRequest.getSortBy(),
+                pagingRequest.getOrderDirection()
         ).getContent();
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
@@ -114,14 +112,15 @@ public class AdminController {
 
     //ROLE_ADMIN - PUT - Chỉnh sửa thông tin sản phẩm #4909
     @PutMapping("/products/{productId}")
-    public ResponseEntity<Products> updateProduct(@PathVariable Long productId, @RequestBody ProductRequest productRequest){
+    public ResponseEntity<Products> updateProduct(@PathVariable Long productId,@Valid @RequestBody ProductRequest productRequest){
         return new ResponseEntity<>(productService.updateProduct(productRequest,productId), HttpStatus.OK);
     }
 
     //ROLE_ADMIN - POST - Thêm mới sản phẩm #4908
     @PostMapping("/products")
-    public ResponseEntity<Products> addProduct(@RequestBody Products products){
-        return new ResponseEntity<>(productService.addProduct(products), HttpStatus.CREATED);
+    public ResponseEntity<Products> addProduct(@Valid @RequestBody NewProductRequest productRequest){
+        Products products = productService.addProduct(productRequest);
+        return new ResponseEntity<>(products, HttpStatus.CREATED);
     }
 
     //ROLE_ADMIN - GET - Lấy về thông tin sản phẩm theo id #4907
@@ -137,8 +136,8 @@ public class AdminController {
         List<Products> products = productService.getAllProducts(
                 pagingRequest.getPage()-1,
                 pagingRequest.getPageItem(),
-                pagingRequest.getOrderDirection(),
-                pagingRequest.getSortBy()
+                pagingRequest.getSortBy(),
+                pagingRequest.getOrderDirection()
         ).getContent();
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
@@ -150,21 +149,20 @@ public class AdminController {
     }
 
     //ROLE_ADMIN - GET - Danh sách đơn hàng theo trạng thái #4917
-    @GetMapping("/orders/{orderStatus}")
-    public ResponseEntity<List<Order>> getAllOrdersByStatus(@PathVariable OrderStatus orderStatus){
+    @GetMapping("/order/{orderStatus}")
+    public ResponseEntity<List<Order>> getAllOrdersByStatus(@PathVariable("orderStatus") String orderStatus){
         return new ResponseEntity<>(orderService.getOrderByStatus(orderStatus),HttpStatus.OK);
     }
 
     //ROLE_ADMIN - GET - Chi tiết đơn hàng - #4918
     @GetMapping("orders/{orderId}")
-    public ResponseEntity<List<OrderDetail>> getOrderDetailsByOrderId(@PathVariable Long orderId){
+    public ResponseEntity<List<OrderDetail>> getOrderDetailsByOrderId(@PathVariable("orderId") Long orderId){
         return new ResponseEntity<>(orderService.getOrderDetailsByOrderId(orderId),HttpStatus.OK);
     }
 
     //ROLE_ADMIN - PUT - Cập nhật trạng thái đơn hàng #4919
     @PutMapping("/orders/{orderId}/status")
-    public ResponseEntity<ResponseWrapper<Order>> updateOrderStatus(@PathVariable Long orderId, @RequestBody OrderStatusRequest orderStatusRequest){
-        orderService.updateOrderStatus(orderId, orderStatusRequest);
+    public ResponseEntity<ResponseWrapper<Order>> updateOrderStatus(@PathVariable Long orderId, @RequestParam String orderStatusRequest){
         return new ResponseEntity<>(ResponseWrapper.<Order>builder()
                 .data(orderService.updateOrderStatus(orderId, orderStatusRequest))
                 .eHttpStatus(EHttpStatus.SUCCESS)

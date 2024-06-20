@@ -11,5 +11,5 @@ import ra.project_md4_tqthang.constants.OrderStatus;
 @Getter
 @Setter
 public class OrderStatusRequest {
-    private OrderStatus orderStatus;
+    private String orderStatus;
 }

@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface ICartRepository extends JpaRepository<ShoppingCart, Long> {
     Optional<ShoppingCart> findByUserAndProduct(Users user, Products product);
-    void deleteByUser(Users user);
+    void deleteShoppingCartByUser_UserId(Long userId);
     @Query("select c from ShoppingCart c where c.user.userId=:userId")
     List<ShoppingCart> findByUserId(Long userId);
 

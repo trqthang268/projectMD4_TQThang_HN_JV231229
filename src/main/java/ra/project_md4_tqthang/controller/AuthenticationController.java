@@ -1,5 +1,6 @@
 package ra.project_md4_tqthang.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,7 @@ public class AuthenticationController {
 
     //PermitAll - POST - Đăng kí tài khoản người dùng   #4870
     @PostMapping("/sign-up")
-    public ResponseEntity<?> handleRegister(@RequestBody FormRegister formRegister){
+    public ResponseEntity<?> handleRegister(@Valid @RequestBody FormRegister formRegister){
         authService.handleRegister(formRegister);
         return new ResponseEntity<>(
                 ResponseWrapper.builder().eHttpStatus(EHttpStatus.SUCCESS)
@@ -35,7 +36,7 @@ public class AuthenticationController {
 
     //PermitAll - POST - Đăng nhập tài khoản bằng username và password #4871
     @PostMapping("/sign-in")
-    public ResponseEntity<?> handleLogin(@RequestBody FormLogin formLogin){
+    public ResponseEntity<?> handleLogin(@Valid @RequestBody FormLogin formLogin){
         return new ResponseEntity<>(
                 ResponseWrapper.builder()
                         .eHttpStatus(EHttpStatus.SUCCESS)

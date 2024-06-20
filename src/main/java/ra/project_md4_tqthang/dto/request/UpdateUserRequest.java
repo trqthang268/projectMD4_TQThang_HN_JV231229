@@ -6,6 +6,7 @@ import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
+import ra.project_md4_tqthang.validation.UserExist;
 
 import java.util.Date;
 
@@ -15,6 +16,7 @@ import java.util.Date;
 @Setter
 @Builder
 public class UpdateUserRequest {
+    @UserExist
     private String userName;
     @Pattern(regexp = "^((?!\\.)[\\w\\-_.]*[^.])(@\\w+)(\\.\\w+(\\.\\w+)?[^.\\W])$",message = "Invalid email format!")
     private String email;

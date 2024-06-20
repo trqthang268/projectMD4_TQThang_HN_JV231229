@@ -18,30 +18,30 @@ import java.util.Set;
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id")
     private Long userId;
 
-    @Column(unique = true, nullable = false, length = 100)
+    @Column(unique = true, length = 100)
     private String userName;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true )
     @Pattern(regexp = "^((?!\\.)[\\w\\-_.]*[^.])(@\\w+)(\\.\\w+(\\.\\w+)?[^.\\W])$",message = "Invalid email format!")
     private String email;
 
-    @Column(nullable = false)
+    @Column()
     private String password;
 
-    @Column(nullable = false)
+    @Column()
     private String fullName;
 
-    @Column(nullable = false, length = 15)
+    @Column(length = 15)
     @Pattern(regexp = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$",message = "Invalid phone format!")
     private String phoneNumber;
 
-    @Column(nullable = false)
+    @Column(length = 100)
     private String address;
 
-    @Column(nullable = false)
+    @Column()
     private Boolean status;
 
     @DateTimeFormat(pattern = "dd/MM/yyyy")

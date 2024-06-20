@@ -8,6 +8,8 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 import ra.project_md4_tqthang.model.Category;
 
+import java.util.Optional;
+
 @Repository
 public interface ICategoryRepository extends JpaRepository<Category, Long> , PagingAndSortingRepository<Category,Long> {
     @Query("select count(p)>0 from Products p where p.category.categoryId=:categoryId")
@@ -17,5 +19,5 @@ public interface ICategoryRepository extends JpaRepository<Category, Long> , Pag
     @Query("select c from Category c")
     Page<Category> findAllCategory(Pageable pageable);
 
-    boolean existsByCategoryName(String categoryName);
+    Optional<Category> findCategoryByCategoryName(String categoryName);
 }

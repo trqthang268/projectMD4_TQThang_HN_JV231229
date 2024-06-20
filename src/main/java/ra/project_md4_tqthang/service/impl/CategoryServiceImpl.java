@@ -56,7 +56,12 @@ public class CategoryServiceImpl implements ICategoryService {
     }
 
     @Override
-    public Category addCategory(Category category) throws CustomException {
+    public Category addCategory(CategoryRequest categoryRequest) throws CustomException {
+        Category category = Category.builder()
+                .categoryName(categoryRequest.getCategoryName())
+                .description(categoryRequest.getDescription())
+                .status(categoryRequest.getStatus())
+                .build();
         return categoryRepository.save(category);
     }
 

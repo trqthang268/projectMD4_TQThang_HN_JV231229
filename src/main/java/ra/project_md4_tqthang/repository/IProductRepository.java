@@ -28,7 +28,7 @@ public interface IProductRepository extends JpaRepository<Products, Long> , Pagi
     @Query("select p from Products p where p.productName like concat('%',:productNameOrDesc,'%') or p.description like concat('%',:productNameOrDesc,'%')")
     List<Products> searchProductsByNameOrDesc(String productNameOrDesc);
     // get best seller
-    @Query("select p from Products p join OrderDetail od on p.productId=od.products.productId group by p.productId order by sum(od.orderQuantity) desc")
+    @Query("select p from Products p JOIN (SELECT od.orderDetailId.products.productId AS product_id, Sum(od.orderQuantity) AS total_buy FROM OrderDetail od GROUP BY od.orderDetailId.products.productId ) v ON p.productId = v.product_id ORDER BY v.total_buy DESC")
     List<Products> getBestSellerProducts();
 
     Optional<Products> findProductsByProductName(String productName);

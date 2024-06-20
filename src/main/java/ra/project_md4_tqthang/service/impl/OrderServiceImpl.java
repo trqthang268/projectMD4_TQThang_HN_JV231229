@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ra.project_md4_tqthang.constants.EHttpStatus;
 import ra.project_md4_tqthang.constants.OrderStatus;
 import ra.project_md4_tqthang.dto.request.CheckoutRequest;
@@ -28,6 +29,7 @@ public class OrderServiceImpl implements IOrderService {
     @Autowired
     private IProductRepository productRepository;
 
+    @Transactional
     @Override
     public void checkout(Long userId, CheckoutRequest checkoutRequest) throws CustomException {
         Users user = userRepository.findById(userId)
@@ -70,9 +72,7 @@ public class OrderServiceImpl implements IOrderService {
             Products products =productRepository.findById(shoppingCart.getProduct().getProductId())
                     .orElseThrow(()->new NoSuchElementException("product not found"));
             OrderDetail orderDetail = OrderDetail.builder()
-                    .orderDetailId(new OrderDetailId(order.getOrderId(),products.getProductId()))
-                    .order(order)
-                    .products(products)
+                    .orderDetailId(new OrderDetailId(order,products))
                     .orderQuantity(shoppingCart.getOrderQuantity())
                     .name(products.getProductName())
                     .unitPrice(products.getUnitPrice())
@@ -84,7 +84,7 @@ public class OrderServiceImpl implements IOrderService {
             orderDetailRepository.save(orderDetail);
             productRepository.save(products);
         }
-        cartRepository.deleteByUser(user); // xoa cart sau khi checkout
+        cartRepository.deleteShoppingCartByUser_UserId(user.getUserId()); // xoa cart sau khi checkout
     }
 
     @Override
@@ -93,8 +93,17 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public List<Order> getOrderByStatus(OrderStatus status) {
-        return orderRepository.getOrdersByOrderStatus(status);
+    public List<Order> getOrderByStatus(String status) {
+        return switch (status.toUpperCase().trim()){
+            case "WAITING" -> orderRepository.getOrdersByOrderStatus(OrderStatus.WAITING);
+            case "CONFIRM" -> orderRepository.getOrdersByOrderStatus(OrderStatus.CONFIRM);
+            case "DELIVERY" -> orderRepository.getOrdersByOrderStatus(OrderStatus.DELIVERY);
+            case "DENIED" -> orderRepository.getOrdersByOrderStatus(OrderStatus.DENIED);
+            case "CANCEL" -> orderRepository.getOrdersByOrderStatus(OrderStatus.CANCEL);
+            case "SUCCESS" -> orderRepository.getOrdersByOrderStatus(OrderStatus.SUCCESS);
+            default -> throw new IllegalStateException("Unexpected value: " + status.toUpperCase().trim());
+        }
+                ;
     }
 
     @Override
@@ -103,10 +112,18 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public Order updateOrderStatus(Long orderId, OrderStatusRequest statusRequest) {
+    public Order updateOrderStatus(Long orderId, String statusRequest) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(()->new NoSuchElementException("order not found"));
-        order.setOrderStatus(statusRequest.getOrderStatus());
+        switch (statusRequest.toUpperCase().trim()){
+            case "WAITING" -> order.setOrderStatus(OrderStatus.WAITING);
+            case "CONFIRM" -> order.setOrderStatus(OrderStatus.CONFIRM);
+            case "DELIVERY" -> order.setOrderStatus(OrderStatus.DELIVERY);
+            case "DENIED" -> order.setOrderStatus(OrderStatus.DENIED);
+//            case "CANCEL" -> order.setOrderStatus(OrderStatus.CANCEL);
+            case "SUCCESS" -> order.setOrderStatus(OrderStatus.SUCCESS);
+            default -> throw new NoSuchElementException("Status not valid");
+        }
         return orderRepository.save(order);
     }
 
@@ -151,7 +168,7 @@ public class OrderServiceImpl implements IOrderService {
         //tra lai stock
         List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrder_OrderId(orderId);
         for (OrderDetail detail : orderDetails) {
-            Products products = detail.getProducts();
+            Products products = productRepository.findById(detail.getOrderDetailId().getProducts().getProductId()).orElseThrow(()->new NoSuchElementException("product not found"));
             products.setStockQuantity(products.getStockQuantity()+detail.getOrderQuantity());
             productRepository.save(products);
         }

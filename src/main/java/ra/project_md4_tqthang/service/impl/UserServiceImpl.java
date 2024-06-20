@@ -93,4 +93,13 @@ public class UserServiceImpl implements IUserService {
         users.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
         return userRepository.save(users);
     }
+
+    @Override
+    public Users updateStatus(Long id) {
+        Users users = userRepository.findById(id)
+                .orElseThrow(()->new NoSuchElementException("user not found"));
+        users.setStatus(!users.getStatus());
+        return userRepository.save(users);
+    }
+
 }

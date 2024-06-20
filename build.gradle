@@ -38,6 +38,7 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
     implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+    implementation("javax.xml.bind:jaxb-api:2.3.1")
     // https://mvnrepository.com/artifact/org.mindrot/jbcrypt
     implementation("org.mindrot:jbcrypt:0.4")
 }

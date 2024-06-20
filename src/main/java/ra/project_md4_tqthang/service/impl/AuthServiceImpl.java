@@ -22,6 +22,7 @@ import ra.project_md4_tqthang.security.principal.UserDetailCustom;
 import ra.project_md4_tqthang.service.IAuthService;
 import ra.project_md4_tqthang.service.IRoleService;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -63,13 +64,14 @@ public class AuthServiceImpl implements IAuthService {
             });
         }
         Users users = Users.builder()
-                .fullName(formRegister.getFullName())
+                .userName(formRegister.getUserName())
                 .phoneNumber(formRegister.getPhone())
                 .fullName(formRegister.getFullName())
                 .email(formRegister.getEmail())
                 .password(passwordEncoder.encode(formRegister.getPassword()))
                 .roles(roles)
                 .status(true)
+                .createAt(new Date())
                 .build();
         userRepository.save(users);
     }

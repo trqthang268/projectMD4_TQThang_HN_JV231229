@@ -14,15 +14,16 @@ import ra.project_md4_tqthang.validation.CategoryNameExist;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "category_id", nullable = false)
+    @Column(name = "category_id")
     private Long categoryId;
 
-    @CategoryNameExist
-    @Column(nullable = false, length = 100)
+//    @CategoryNameExist
+    @Column(length = 100,name = "category_name")
     private String categoryName;
 
+    @Column(name = "description")
     private String description;
 
-    @Column(nullable = false)
+    @Column(name = "status")
     private Boolean status;
 }
